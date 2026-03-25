@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroStudy</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+header {
+  background-color: #6b5b53;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #8a776d;
+}
+nav button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 14px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+nav button:hover {
+  background-color: #a08c82;
+}
+.page {
+  display: none;
+  padding: 20px;
+}
+.active {
+  display: block;
+}
+.card {
+  background: white;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NeuroStudy</h1>
+  <p>Simple, calm revision for exams</p>
+</header>
+
+<nav>
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('maths')">Maths</button>
+  <button onclick="showPage('english')">English</button>
+  <button onclick="showPage('science')">Science</button>
+</nav>
+
+<div id="home" class="page active">
+  <div class="card">
+    <h2>Welcome</h2>
+    <p>Select a subject to begin. Everything is broken into small, simple steps.</p>
+  </div>
+</div>
+
+<div id="maths" class="page">
+  <div class="card">
+    <h2>Algebra Basics</h2>
+    <p><strong>Step 1:</strong> x + 3 = 7</p>
+    <p><strong>Step 2:</strong> Subtract 3 from both sides</p>
+    <p><strong>Answer:</strong> x = 4</p>
+  </div>
+</div>
+
+<div id="english" class="page">
+  <div class="card">
+    <h2>Language Techniques</h2>
+    <p><strong>Simile:</strong> Comparing using 'like' or 'as'</p>
+    <p>Example: "as brave as a lion"</p>
+  </div>
+</div>
+
+<div id="science" class="page">
+  <div class="card">
+    <h2>Cell Biology</h2>
+    <p>Cells are the basic unit of life.</p>
+    <p>Animal cells and plant cells have different structures.</p>
+  </div>
+</div>
+
+<script>
+function showPage(pageId) {
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(page => page.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+}
+</script>
+
+</body>
+</html>
