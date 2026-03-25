@@ -3,85 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroStudy Flashcards</title>
+<title>NeuroStudy Game</title>
 <style>
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  background-color: #f4f4f4;
+  background: linear-gradient(135deg, #1e1e2f, #2c2c54);
+  color: white;
   text-align: center;
 }
 header {
-  background-color: #6b5b53;
-  color: white;
-  padding: 15px;
-}
-.container {
   padding: 20px;
+  font-size: 28px;
+  font-weight: bold;
 }
-button {
-  padding: 10px 20px;
-  margin: 10px;
+.container { padding: 20px; }
+.button {
+  background: #6c5ce7;
   border: none;
-  border-radius: 8px;
+  padding: 15px 25px;
+  margin: 10px;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
   cursor: pointer;
 }
+.button:hover { background: #a29bfe; }
 .card {
-  background: white;
+  background: #2d2d44;
   padding: 30px;
   margin: 20px auto;
-  width: 300px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 350px;
+  border-radius: 15px;
+}
+.answer-btn {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
 }
 .hidden { display: none; }
+.progress { margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>NeuroStudy</h1>
-  <p>Flashcard Revision</p>
-</header>
+<header>🎮 NeuroStudy Adventure</header>
 
-<div class="container" id="menu">
-  <h2>Choose a subject</h2>
-  <button onclick="start('maths')">Maths</button>
-  <button onclick="start('english')">English</button>
-  <button onclick="start('science')">Science</button>
+<div id="menu" class="container">
+  <h2>Select Your Subject</h2>
+  <button class="button" onclick="start('maths')">Maths</button>
+  <button class="button" onclick="start('english')">English</button>
+  <button class="button" onclick="start('science')">Science</button>
 </div>
 
-<div class="container hidden" id="game">
+<div id="game" class="container hidden">
   <div class="card">
-    <h3 id="question">Question</h3>
-    <input type="text" id="answer" placeholder="Type your answer">
-    <br><br>
-    <button onclick="checkAnswer()">Submit</button>
+    <h3 id="question"></h3>
+    <div id="answers"></div>
     <p id="feedback"></p>
-    <button onclick="nextQuestion()">Next</button>
+    <div class="progress">
+      Score: <span id="score">0</span>
+    </div>
+    <button class="button" onclick="nextQuestion()">Next</button>
   </div>
 </div>
 
 <script>
 let questions = {
   maths: [
-    {q: "What is 5 + 3?", a: "8", explain: "5 + 3 = 8"},
-    {q: "Solve x: x + 4 = 10", a: "6", explain: "Subtract 4 from 10"}
+    {q: "What is 5 + 3?", options: ["6","7","8","9"], correct: "8", explain: "5 + 3 = 8"},
+    {q: "Solve x: x + 4 = 10", options: ["5","6","7","8"], correct: "6", explain: "10 - 4 = 6"},
+    {q: "What is 10% of 50?", options: ["5","10","15","20"], correct: "5", explain: "10% = 0.1 so 0.1×50"}
   ],
   english: [
-    {q: "What is a simile?", a: "comparison", explain: "A simile compares using like or as"}
+    {q: "What is a simile?", options: ["comparison","metaphor","verb","noun"], correct: "comparison", explain: "Uses like or as"},
+    {q: "Which is a verb?", options: ["run","blue","happy","table"], correct: "run", explain: "A verb is an action"}
   ],
   science: [
-    {q: "What is a cell?", a: "basic unit of life", explain: "Cells are the smallest unit of life"}
+    {q: "What is a cell?", options: ["basic unit of life","atom","organ","tissue"], correct: "basic unit of life", explain: "Cells are smallest life units"},
+    {q: "Energy cannot be?", options: ["created","used","stored","transferred"], correct: "created", explain: "Law of conservation of energy"}
   ]
 };
 
 let currentSubject = "";
 let currentIndex = 0;
+let score = 0;
 
 function start(subject) {
   currentSubject = subject;
   currentIndex = 0;
+  score = 0;
   document.getElementById('menu').classList.add('hidden');
   document.getElementById('game').classList.remove('hidden');
   loadQuestion();
@@ -90,26 +105,35 @@ function start(subject) {
 function loadQuestion() {
   let q = questions[currentSubject][currentIndex];
   document.getElementById('question').innerText = q.q;
-  document.getElementById('answer').value = "";
   document.getElementById('feedback').innerText = "";
+
+  let answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = "";
+
+  q.options.forEach(option => {
+    let btn = document.createElement('button');
+    btn.innerText = option;
+    btn.className = 'answer-btn';
+    btn.onclick = () => checkAnswer(option);
+    answersDiv.appendChild(btn);
+  });
 }
 
-function checkAnswer() {
-  let userAnswer = document.getElementById('answer').value.toLowerCase();
-  let correct = questions[currentSubject][currentIndex].a.toLowerCase();
-  let explain = questions[currentSubject][currentIndex].explain;
-
-  if(userAnswer === correct) {
+function checkAnswer(answer) {
+  let q = questions[currentSubject][currentIndex];
+  if(answer === q.correct) {
+    score++;
     document.getElementById('feedback').innerText = "Correct ✅";
   } else {
-    document.getElementById('feedback').innerText = "Incorrect ❌ | " + explain;
+    document.getElementById('feedback').innerText = "Wrong ❌ | " + q.explain;
   }
+  document.getElementById('score').innerText = score;
 }
 
 function nextQuestion() {
   currentIndex++;
   if(currentIndex >= questions[currentSubject].length) {
-    alert("Finished!");
+    alert("Game Over! Your score: " + score);
     location.reload();
   } else {
     loadQuestion();
