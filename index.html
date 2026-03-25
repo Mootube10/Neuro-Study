@@ -3,101 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroStudy</title>
+<title>NeuroStudy Flashcards</title>
 <style>
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   background-color: #f4f4f4;
+  text-align: center;
 }
 header {
   background-color: #6b5b53;
   color: white;
   padding: 15px;
-  text-align: center;
 }
-nav {
-  display: flex;
-  justify-content: center;
-  background-color: #8a776d;
-}
-nav button {
-  background: none;
-  border: none;
-  color: white;
-  padding: 14px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
-nav button:hover {
-  background-color: #a08c82;
-}
-.page {
-  display: none;
+.container {
   padding: 20px;
 }
-.active {
-  display: block;
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 .card {
   background: white;
-  padding: 20px;
-  margin: 10px 0;
-  border-radius: 10px;
+  padding: 30px;
+  margin: 20px auto;
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+.hidden { display: none; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>NeuroStudy</h1>
-  <p>Simple, calm revision for exams</p>
+  <p>Flashcard Revision</p>
 </header>
 
-<nav>
-  <button onclick="showPage('home')">Home</button>
-  <button onclick="showPage('maths')">Maths</button>
-  <button onclick="showPage('english')">English</button>
-  <button onclick="showPage('science')">Science</button>
-</nav>
-
-<div id="home" class="page active">
-  <div class="card">
-    <h2>Welcome</h2>
-    <p>Select a subject to begin. Everything is broken into small, simple steps.</p>
-  </div>
+<div class="container" id="menu">
+  <h2>Choose a subject</h2>
+  <button onclick="start('maths')">Maths</button>
+  <button onclick="start('english')">English</button>
+  <button onclick="start('science')">Science</button>
 </div>
 
-<div id="maths" class="page">
+<div class="container hidden" id="game">
   <div class="card">
-    <h2>Algebra Basics</h2>
-    <p><strong>Step 1:</strong> x + 3 = 7</p>
-    <p><strong>Step 2:</strong> Subtract 3 from both sides</p>
-    <p><strong>Answer:</strong> x = 4</p>
-  </div>
-</div>
-
-<div id="english" class="page">
-  <div class="card">
-    <h2>Language Techniques</h2>
-    <p><strong>Simile:</strong> Comparing using 'like' or 'as'</p>
-    <p>Example: "as brave as a lion"</p>
-  </div>
-</div>
-
-<div id="science" class="page">
-  <div class="card">
-    <h2>Cell Biology</h2>
-    <p>Cells are the basic unit of life.</p>
-    <p>Animal cells and plant cells have different structures.</p>
+    <h3 id="question">Question</h3>
+    <input type="text" id="answer" placeholder="Type your answer">
+    <br><br>
+    <button onclick="checkAnswer()">Submit</button>
+    <p id="feedback"></p>
+    <button onclick="nextQuestion()">Next</button>
   </div>
 </div>
 
 <script>
-function showPage(pageId) {
-  const pages = document.querySelectorAll('.page');
-  pages.forEach(page => page.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
+let questions = {
+  maths: [
+    {q: "What is 5 + 3?", a: "8", explain: "5 + 3 = 8"},
+    {q: "Solve x: x + 4 = 10", a: "6", explain: "Subtract 4 from 10"}
+  ],
+  english: [
+    {q: "What is a simile?", a: "comparison", explain: "A simile compares using like or as"}
+  ],
+  science: [
+    {q: "What is a cell?", a: "basic unit of life", explain: "Cells are the smallest unit of life"}
+  ]
+};
+
+let currentSubject = "";
+let currentIndex = 0;
+
+function start(subject) {
+  currentSubject = subject;
+  currentIndex = 0;
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  let q = questions[currentSubject][currentIndex];
+  document.getElementById('question').innerText = q.q;
+  document.getElementById('answer').value = "";
+  document.getElementById('feedback').innerText = "";
+}
+
+function checkAnswer() {
+  let userAnswer = document.getElementById('answer').value.toLowerCase();
+  let correct = questions[currentSubject][currentIndex].a.toLowerCase();
+  let explain = questions[currentSubject][currentIndex].explain;
+
+  if(userAnswer === correct) {
+    document.getElementById('feedback').innerText = "Correct ✅";
+  } else {
+    document.getElementById('feedback').innerText = "Incorrect ❌ | " + explain;
+  }
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if(currentIndex >= questions[currentSubject].length) {
+    alert("Finished!");
+    location.reload();
+  } else {
+    loadQuestion();
+  }
 }
 </script>
 
